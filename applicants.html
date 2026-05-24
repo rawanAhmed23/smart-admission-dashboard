@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة القبول الذكي - طلبات المتقدمين</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+    </style>
+    <script type="module" src="js/auth-guard.js"></script>
+</head>
+
+<body class="bg-gray-50 flex h-screen overflow-hidden">
+
+    <div class="flex w-full h-full">
+
+        <div class="w-64 bg-[#1e1e2f] text-white flex flex-col justify-between p-4">
+            <div>
+                <div class="flex items-center gap-3 mb-8 px-2 py-4 border-b border-gray-700">
+                    <div class="bg-blue-600 p-2 rounded-lg text-white font-bold text-xl shadow-md">S</div>
+                    <span class="text-xl font-bold tracking-wide">القبول الذكي</span>
+                </div>
+                <nav class="space-y-2">
+                    <a href="index.html"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#2d2d44] hover:text-white rounded-lg transition-all">
+                        <i class="fa-solid fa-chart-pie w-5"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    <a href="applicants.html"
+                        class="flex items-center gap-3 px-4 py-3 bg-[#5c5fc8] text-white rounded-lg transition-all font-semibold">
+                        <i class="fa-solid fa-users w-5"></i>
+                        <span>طلبات المتقدمين</span>
+                    </a>
+                    <a href="exams.html"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#2d2d44] hover:text-white rounded-lg transition-all">
+                        <i class="fa-solid fa-file-signature w-5"></i>
+                        <span>إدارة الاختبارات</span>
+                    </a>
+                </nav>
+                <div class="p-4 border-t border-gray-700">
+                    <button id="signout-btn"
+                        class="flex items-center gap-3 w-full px-4 py-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-all">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>تسجيل الخروج</span>
+                    </button>
+                </div>
+            </div>
+            <div class="text-xs text-center text-gray-500 border-t border-gray-700 pt-4">
+                مدارس التكنولوجيا التطبيقية © 2026
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col overflow-y-auto p-8">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">طلبات المتقدمين</h1>
+                    <p class="text-gray-500 mt-1">إدارة ومراجعة ملفات الطلاب الجدد وتغيير حالات القبول</p>
+                </div>
+                <div class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg font-semibold shadow-sm">
+                    إجمالي الطلبات: <span id="total-applicants-count">0</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm mb-6 flex flex-wrap gap-4 items-center">
+                <div class="flex-1 min-w-[200px]">
+                    <input type="text" id="search-name" placeholder="ابحث باسم الطالب..."
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="w-48">
+                    <select id="filter-specialization"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500">
+                        <option value="all">كل التخصصات</option>
+                        <option value="programming">تطوير برمجيات</option>
+                        <option value="networking">هندسة شبكات</option>
+                        <option value="electronics">إلكترونيات صناعية</option>
+                        <option value="telecom">اتصالات ونقل بيانات</option>
+                    </select>
+                </div>
+                <div class="w-48">
+                    <select id="filter-status"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500">
+                        <option value="all">كل الحالات</option>
+                        <option value="pending">قيد المراجعة</option>
+                        <option value="exam_waiting">بانتظار الاختبار</option>
+                        <option value="accepted_initial">مقبول مبدئياً</option>
+                        <option value="rejected">مرفوض</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden flex-1 flex flex-col justify-between">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal border-b border-gray-200">
+                                <th class="py-4 px-6 font-bold">اسم الطالب</th>
+                                <th class="py-4 px-6 font-bold">المحافظة</th>
+                                <th class="py-4 px-6 font-bold">التخصص المطلوب</th>
+                                <th class="py-4 px-6 font-bold">تاريخ التقديم</th>
+                                <th class="py-4 px-6 font-bold">حالة الطلب</th>
+                                <th class="py-4 px-6 font-bold text-center">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicants-table-body" class="text-gray-600 text-sm font-light">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="empty-state" class="hidden p-8 text-center text-gray-500">
+                    <i class="fa-regular fa-folder-open text-4xl mb-2 text-gray-300"></i>
+                    <p>لا توجد طلبات متطابقة مع البحث الحالي</p>
+                </div>
+
+                <div
+                    class="bg-white px-6 py-4 border-t border-gray-200 flex items-center justify-between flex-row-reverse select-none">
+                    <div class="flex items-center gap-2">
+                        <button id="prev-page-btn"
+                            class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                            <i class="fa-solid fa-chevron-right text-xs ml-1"></i> السابق
+                        </button>
+
+                        <span id="page-numbers" class="flex gap-1">
+                        </span>
+
+                        <button id="next-page-btn"
+                            class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                            التالي <i class="fa-solid fa-chevron-left text-xs mr-1"></i>
+                        </button>
+                    </div>
+
+                    <div class="text-sm text-gray-500">
+                        عرض <span id="current-range" class="font-semibold text-gray-700">0 - 0</span> من إجمالي <span
+                            id="filtered-total" class="font-semibold text-gray-700">0</span> طلب
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="details-modal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden transform transition-all">
+            <div class="bg-indigo-600 text-white px-6 py-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold"><i class="fa-solid fa-user-graduate ml-2"></i> تفاصيل ملف المتقدم</h3>
+                <button id="close-modal-btn" class="text-white hover:text-gray-200 text-xl focus:outline-none">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 text-right" dir="rtl">
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">اسم الطالب بالكامل</label>
+                    <p id="modal-student-name" class="text-lg font-bold text-gray-800">---</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">المحافظة</label>
+                        <p id="modal-student-gov" class="text-gray-700 font-semibold">---</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">التخصص المطلوب</label>
+                        <p id="modal-student-spec" class="text-purple-700 font-bold">---</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">تاريخ التقديم</label>
+                        <p id="modal-student-date" class="text-gray-600">---</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">حالة الطلب الحالية</label>
+                        <div id="modal-student-status">---</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-100">
+                <button id="action-accept-btn"
+                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow-sm transition-all flex items-center gap-1">
+                    <i class="fa-solid fa-user-check"></i> قبول للمرحلة التالية (الاختبار)
+                </button>
+                <button id="action-reject-btn"
+                    class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg font-semibold text-sm transition-all flex items-center gap-1">
+                    <i class="fa-solid fa-user-xmark"></i> رفض الطلب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/applicants.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة القبول الذكي - لوحة التحكم</title>
+
+    <!-- Tailwind CSS للـ UI والـ Responsiveness -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- خط Cairo لـ مظهر احترافي عربي -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- استدعاء ملف الستايل المخصص -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- مكتبة ApexCharts الرسمية للرسوم البيانية -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script type="module" src="js/auth-guard.js"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+
+        <!-- الـ Sidebar (القائمة الجانبية متجاوبة) -->
+        <aside class="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col justify-between shadow-xl">
+            <div>
+                <div class="flex items-center gap-3 mb-8 px-2 py-4 border-b border-gray-700">
+                    <div class="bg-blue-600 p-2 rounded-lg text-white font-bold text-xl shadow-md">S</div>
+                    <span class="text-xl font-bold tracking-wide">القبول الذكي</span>
+                </div>
+                <nav class="space-y-2">
+                    <a href="#"
+                        class="flex items-center space-x-reverse space-x-3 p-3 rounded-lg bg-indigo-600 text-white font-medium transition">
+                        <span>📊</span> <span>لوحة التحكم</span>
+                    </a>
+                    <a href="applicants.html"
+                        class="flex items-center space-x-reverse space-x-3 p-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white transition">
+                        <span>👥</span> <span>طلبات المتقدمين</span>
+                    </a>
+                    <a href="exams.html"
+                        class="flex items-center space-x-reverse space-x-3 p-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white transition">
+                        <span>📝</span> <span>إدارة الاختبارات</span>
+                    </a>
+                </nav>
+                <div class="p-4 border-t border-gray-700">
+                    <button id="signout-btn"
+                        class="flex items-center gap-3 w-full px-4 py-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-all">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>تسجيل الخروج</span>
+                    </button>
+                </div>
+            </div>
+            <div class="pt-6 border-t border-slate-800 text-xs text-gray-500 text-center">
+                مدارس التكنولوجيا التطبيقية &copy; 2026
+            </div>
+        </aside>
+
+        <!-- المحتوى الرئيسي (Main Content Area) -->
+        <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+
+            <!-- الهيدر العلوي -->
+            <header class="flex justify-between items-center mb-8 border-b border-gray-200 pb-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900">لوحة المتابعة والتحليلات</h1>
+                    <p class="text-sm text-gray-500 mt-1">مراقبة مباشرة لمراحل تقديم الطلاب ونتائج الاختبارات</p>
+                </div>
+                <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 font-medium text-sm">
+                    👤 أدمن نظام القبول
+                </div>
+            </header>
+
+            <!-- شبكة الرسوم البيانية (Grid Setup) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+                <!-- كارد الـ Pie Chart -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800 mb-1">توزيع المتقدمين حسب التخصص</h2>
+                        <p class="text-xs text-gray-400 mb-6">النسب المئوية لرغبات الطلاب الحالية</p>
+                    </div>
+                    <div id="pie-chart" class="w-full"></div>
+                </div>
+
+                <!-- كارد الـ Bar Chart -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800 mb-1">مقارنة أداء الطلاب بالأقسام</h2>
+                        <p class="text-xs text-gray-400 mb-6">متوسط درجات اختبار المهارات مقابل اختبار الـ IQ</p>
+                    </div>
+                    <div id="bar-chart" class="w-full"></div>
+                </div>
+
+            </div>
+
+            <!-- كارد الـ Gantt Chart (ممتد على كامل العرض) -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 w-full">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800 mb-1">الجدول الزمني لمراحل القبول (Gantt Chart)</h2>
+                    <p class="text-xs text-gray-400 mb-6">تتبع الفترات الزمنية المحددة لكل مرحلة من مراحل التصفية</p>
+                </div>
+                <div id="gantt-chart" class="w-full"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- استدعاء السكريبت الرئيسي كموديول للربط مع الفايربيس لاحقاً -->
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+
+</html>
