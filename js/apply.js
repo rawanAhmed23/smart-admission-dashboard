@@ -1,76 +1,103 @@
-import { db } from "./firebase-config.js";
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { auth, db } from './firebase-config.js';
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-const form = document.getElementById("application-form");
-const submitBtn = document.getElementById("submit-btn");
+// 1️⃣ الإمساك بعناصر واجهة لوحة التحكم الجديدة
+const loadingCard = document.getElementById("loading-card");
+const mainDashboardCard = document.getElementById("main-dashboard-card");
+const studentNameEl = document.getElementById("welcome-student-name");
+const specEl = document.getElementById("display-spec");
+const phoneEl = document.getElementById("display-phone");
+const statusEl = document.getElementById("display-status");
 
-// عناصر رسائل الخطأ والمدخلات
-const nameInput = document.getElementById("student-name");
-const govInput = document.getElementById("student-gov");
-const specInput = document.getElementById("student-spec");
+const examReadyBox = document.getElementById("exam-ready-box");
+const examPassedBox = document.getElementById("exam-passed-box");
+const examFailedBox = document.getElementById("exam-failed-box");
+const logoutBtn = document.getElementById("btn-logout");
 
-const nameError = document.getElementById("name-error");
-const govError = document.getElementById("gov-error");
-
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    // إعادة تهيئة رسائل الخطأ قبل الفحص الجديد
-    nameError.classList.add("hidden");
-    govError.classList.add("hidden");
-    nameInput.classList.remove("border-red-500");
-    govInput.classList.remove("border-red-500");
-
-    const name = nameInput.value.trim();
-    const governorate = govInput.value.trim();
-    const specialization = specInput.value;
-    
-    let isValid = true;
-
-    // 1. Validation الاسم (حروف عربية فقط + رباعي على الأقل)
-    const arabicPattern = /^[\u0600-\u06FF\s]+$/; 
-    const wordCount = name.split(/\s+/).filter(word => word.length > 0).length;
-
-    if (!arabicPattern.test(name) || wordCount < 4) {
-        nameError.classList.remove("hidden");
-        nameInput.classList.add("border-red-500");
-        isValid = false;
+// 2️⃣ مراقبة حالة الطالب وجلب بياناته من الـ Firestore تلقائياً
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        // لو مش مسجل دخول.. يرجعه لصفحة الدخول فوراً
+        window.location.href = "student-auth.html";
+        return;
     }
-
-    // 2. Validation المحافظة (حروف عربية فقط وبدون أرقام)
-    if (!arabicPattern.test(governorate) || governorate.length < 3) {
-        govError.classList.remove("hidden");
-        govInput.classList.add("border-red-500");
-        isValid = false;
-    }
-
-    // لو فيه أي خطأ، نوقف عملية الإرسال فوراً
-    if (!isValid) return;
-
-    // تجهيز تاريخ اليوم الحالي
-    const today = new Date().toISOString().split('T')[0];
-
-    // تغيير شكل الزرار أثناء الرفع
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري إرسال الطلب...`;
 
     try {
-        await addDoc(collection(db, "applicants"), {
-            name: name,
-            governorate: governorate,
-            specialization: specialization,
-            date: today,
-            status: 'pending'
-        });
+        // جلب وثيقة الطالب من كولكشن المتقدمين باستخدام الـ UID بتاعه
+        const applicantRef = doc(db, "applicants", user.uid);
+        const applicantSnap = await getDoc(applicantRef);
 
-        alert("تم إرسال طلبك بنجاح وبانتظار المراجعة! بالتوفيق.");
-        form.reset();
+        if (applicantSnap.exists()) {
+            const studentData = applicantSnap.data();
 
+            // طباعة بيانات الطالب في لوحة التحكم
+            studentNameEl.innerText = studentData.name;
+            phoneEl.innerText = studentData.phone || "غير مسجل";
+
+            // ترجمة التخصص لشكل جمالي باللغة العربية
+            const specsTranslations = {
+                programming: "تطوير برمجيات (Software)",
+                networking: "هندسة شبكات (Networking)",
+                electronics: "إلكترونيات صناعية",
+                telecom: "اتصالات ونقل بيانات"
+            };
+            specEl.innerText = specsTranslations[studentData.specialization] || studentData.specialization;
+
+            // إخفاء كل كروت الحالات أولاً قبل الفحص
+            examReadyBox.classList.add("hidden");
+            examPassedBox.classList.add("hidden");
+            examFailedBox.classList.add("hidden");
+
+            // 3️⃣ التحكم الديناميكي في الأزرار والكروت حسب حالة الطالب (Status)
+            if (studentData.status === "exam_waiting") {
+                statusEl.innerText = "بانتظار أداء الاختبار";
+                statusEl.className = "font-bold px-3 py-1 rounded-lg text-xs bg-amber-100 text-amber-700 border border-amber-200";
+                
+                // إظهار صندوق وزرار دخول الامتحان فوراً
+                examReadyBox.classList.remove("hidden"); 
+            } 
+            else if (studentData.status === "accepted_initial") {
+                statusEl.innerText = "مقبول مبدئياً 🎉";
+                statusEl.className = "font-bold px-3 py-1 rounded-lg text-xs bg-emerald-100 text-emerald-700 border border-emerald-200";
+                
+                examPassedBox.classList.remove("hidden");
+            } 
+            else if (studentData.status === "rejected") {
+                statusEl.innerText = "لم يوفق";
+                statusEl.className = "font-bold px-3 py-1 rounded-lg text-xs bg-rose-100 text-rose-700 border border-rose-200";
+                
+                examFailedBox.classList.remove("hidden");
+            } 
+            else {
+                statusEl.innerText = "قيد المراجعة";
+                statusEl.className = "font-bold px-3 py-1 rounded-lg text-xs bg-gray-100 text-gray-700 border border-gray-200";
+            }
+
+            // إخفاء شاشة التحميل وإظهار لوحة التحكم كاملة للطالب
+            loadingCard.classList.add("hidden");
+            mainDashboardCard.classList.remove("hidden");
+
+        } else {
+            console.error("لم يتم العثور على وثيقة الطالب في كولكشن applicants");
+            loadingCard.innerHTML = `<p class="text-red-500 font-bold">خطأ: لم يتم العثور على ملف تقديم مرتبط بهذا الحساب.</p>`;
+        }
     } catch (error) {
-        console.error("Error adding document: ", error);
-        alert("حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى.");
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> إرسال طلب التقديم`;
+        console.error("Error loading student dashboard:", error);
+        loadingCard.innerHTML = `<p class="text-red-500 font-bold">حدث خطأ أثناء تحميل البيانات. يرجى إعادة المحاولة.</p>`;
     }
 });
+
+// 4️⃣ منطق زر تسجيل الخروج (Logout) للطلاب
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+        if (confirm("هل أنت متأكد من رغبتك في تسجيل الخروج؟")) {
+            try {
+                await signOut(auth);
+                window.location.href = "student-auth.html";
+            } catch (err) {
+                console.error("خطأ أثناء تسجيل الخروج:", err);
+            }
+        }
+    });
+}

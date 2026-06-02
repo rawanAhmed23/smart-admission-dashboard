@@ -17,11 +17,11 @@ let examStudents = [];
 // 1. مراقبة العداد (Badge) لايف وجلب البيانات عند تحميل الصفحة
 // =========================================================
 document.addEventListener("DOMContentLoaded", () => {
-    // مستمع حي فقط للعداد العلوي عشان الـ Admin يتابع كم طالب منتظر بدون تدمير المدخلات الحالية
+    // ⚡ تعديل: العداد بيعد الطلاب اللي خلصوا امتحان ومستنيين الكنترول يعتمد النتيجة (exam_completed)
     onSnapshot(collection(db, "applicants"), (snapshot) => {
         let waitingCount = 0;
         snapshot.forEach((doc) => {
-            if (doc.data().status === 'exam_waiting') {
+            if (doc.data().status === 'exam_completed') {
                 waitingCount++;
             }
         });
@@ -40,7 +40,8 @@ async function loadWaitingStudents() {
         
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            if (data.status === 'exam_waiting') {
+            // ⚡ تعديل: نجلب فقط من أنهى الـ Assessment بنجاح وفي انتظار الكنترول
+            if (data.status === 'exam_completed') {
                 examStudents.push({ id: doc.id, ...data });
             }
         });
@@ -62,7 +63,7 @@ function translateSpec(spec) {
 }
 
 // =========================================================
-// 2. رندرة جدول الكنترول وإضافة مستمعي الكتابة (Input Listeners)
+// 2. رندرة جدول الكنترول وعرض درجات الـ Assessment تلقائياً
 // =========================================================
 function renderExamsTable() {
     tableBody.innerHTML = "";
@@ -73,16 +74,20 @@ function renderExamsTable() {
         emptyState.classList.add("hidden");
 
         examStudents.forEach(student => {
+            // جلب الدرجات القادمة من الـ Assessment (لو مش موجودة بنحط فاضي أو صفر)
+            const currentIQ = student.iq_score !== undefined ? student.iq_score : "";
+            const currentTech = student.technical_score !== undefined ? student.technical_score : "";
+
             const tr = document.createElement("tr");
             tr.className = "border-b border-gray-200 hover:bg-gray-50 transition-all text-right";
             tr.innerHTML = `
                 <td class="py-4 px-6 font-semibold text-gray-800">${student.name}</td>
                 <td class="py-4 px-6 font-medium text-purple-700">${translateSpec(student.specialization)}</td>
                 <td class="py-4 px-6 text-center">
-                    <input type="number" min="0" max="50" id="iq-${student.id}" placeholder="0" class="w-20 text-center px-2 py-1 border rounded-lg focus:outline-none focus:border-blue-500 font-bold text-gray-700">
+                    <input type="number" min="0" max="50" id="iq-${student.id}" value="${currentIQ}" placeholder="0" class="w-20 text-center px-2 py-1 border rounded-lg focus:outline-none focus:border-blue-500 font-bold text-gray-700">
                 </td>
                 <td class="py-4 px-6 text-center">
-                    <input type="number" min="0" max="50" id="tech-${student.id}" placeholder="0" class="w-20 text-center px-2 py-1 border rounded-lg focus:outline-none focus:border-blue-500 font-bold text-gray-700">
+                    <input type="number" min="0" max="50" id="tech-${student.id}" value="${currentTech}" placeholder="0" class="w-20 text-center px-2 py-1 border rounded-lg focus:outline-none focus:border-blue-500 font-bold text-gray-700">
                 </td>
                 <td class="py-4 px-6 text-center font-bold text-gray-800 text-base">
                     <span id="total-${student.id}">0</span>%
@@ -95,11 +100,11 @@ function renderExamsTable() {
             `;
             tableBody.appendChild(tr);
 
-            // الحساب التلقائي المباشر للمجموع أثناء الكتابة
             const iqInput = document.getElementById(`iq-${student.id}`);
             const techInput = document.getElementById(`tech-${student.id}`);
             const totalSpan = document.getElementById(`total-${student.id}`);
 
+            // دالة الحساب والتلوين الديناميكي للمجموع
             const calculateTotal = () => {
                 const iqVal = parseFloat(iqInput.value) || 0;
                 const techVal = parseFloat(techInput.value) || 0;
@@ -107,17 +112,21 @@ function renderExamsTable() {
                 totalSpan.innerText = total;
 
                 if (total >= 60) {
-                    totalSpan.className = "text-green-600 font-bold";
-                } else if (total > 0) {
-                    totalSpan.className = "text-red-600 font-bold";
+                    totalSpan.className = "text-green-600 font-bold text-base";
+                } else {
+                    totalSpan.className = "text-red-600 font-bold text-base";
                 }
             };
 
+            // ⚡ تشغيل الحساب فوراً عند رندرة الصفحة ليظهر المجموع المحسوب للطالب تلقائياً
+            calculateTotal();
+
+            // الاستماع لأي تعديل يدوي قد يقوم به الأدمن (بونص أو تعديل خطأ)
             iqInput.addEventListener("input", calculateTotal);
             techInput.addEventListener("input", calculateTotal);
         });
 
-        // ربط أزرار الحفظ بالدالة المحدثة
+        // ربط أزرار الحفظ بالدالة
         document.querySelectorAll(".save-score-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const studentId = e.currentTarget.getAttribute("data-id");
@@ -128,7 +137,7 @@ function renderExamsTable() {
 }
 
 // =========================================================
-// 3. حفظ النتيجة الفردية وتحديث حالة الطالب
+// 3. حفظ النتيجة الفردية وتحديث حالة الطالب النهائية
 // =========================================================
 async function saveStudentScore(id) {
     const iqScore = parseFloat(document.getElementById(`iq-${id}`).value) || 0;
@@ -141,7 +150,7 @@ async function saveStudentScore(id) {
     try {
         const studentRef = doc(db, "applicants", id);
         
-        // 1. تحديث وثيقة الطالب الحالي
+        // تحديث وثيقة الطالب وتغيير حالته من منتهى لـ مقبول أو مرفوض نهائياً
         await updateDoc(studentRef, {
             iq_score: iqScore,
             technical_score: techScore,
@@ -149,12 +158,12 @@ async function saveStudentScore(id) {
             status: finalStatus
         });
 
-        // 2. تحديث المتوسطات العامة فوراً في الـ Database للـ Bar Chart
+        // تحديث المتوسطات العامة فوراً في الـ Database للـ Bar Chart
         await updateOverallAverages();
 
-        alert("تم رصد الدرجات، وتحديث الـ Dashboard بنجاح!");
+        alert("تم اعتماد درجات الطالب، وترحيلها للإحصائيات بنجاح!");
         
-        // إعادة تحميل الجدول لإخفاء الطالب المعتمَد نتيجته
+        // إعادة تحميل الجدول لإخفاء الطالب المعتمَد نتيجته بنجاح
         loadWaitingStudents();
 
     } catch (error) {
@@ -170,7 +179,6 @@ async function updateOverallAverages() {
     try {
         const querySnapshot = await getDocs(collection(db, "applicants"));
         
-        // هيكل البيانات لحساب المجاميع وعدد الطلاب في كل تخصص
         const stats = {
             programming: { totalSkills: 0, totalIQ: 0, count: 0 },
             networking: { totalSkills: 0, totalIQ: 0, count: 0 },
@@ -178,7 +186,6 @@ async function updateOverallAverages() {
             telecom: { totalSkills: 0, totalIQ: 0, count: 0 }
         };
 
-        // اللوب على كل الطلاب المسجلين بالسيستم ولهم درجات بالفعل
         querySnapshot.forEach((docSnap) => {
             const data = docSnap.data();
             if (data.iq_score !== undefined && data.technical_score !== undefined) {
@@ -191,7 +198,6 @@ async function updateOverallAverages() {
             }
         });
 
-        // تحديث وثيقة المتوسطاتscores  داخل كولكشن charts_data
         const scoresRef = doc(db, "charts_data", "scores");
         await updateDoc(scoresRef, {
             prog_skills: stats.programming.count > 0 ? Math.round(stats.programming.totalSkills / stats.programming.count) : 0,

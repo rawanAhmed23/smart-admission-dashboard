@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة القبول الذكي - نظام الاختبارات الإلكترونية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col justify-between select-none">
+
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800" id="student-name">جاري تحميل اسم الطالب...</h1>
+                <p class="text-xs text-purple-600 font-semibold mt-0.5" id="student-spec">التخصص: ...</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="bg-red-50 text-red-600 px-4 py-2 rounded-xl font-bold flex items-center gap-2 border border-red-200 shadow-sm">
+                    <i class="fa-solid fa-clock animate-pulse"></i>
+                    <span id="exam-timer">20:00</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="w-full bg-gray-200 h-1.5 sticky top-[73px] z-40">
+        <div id="exam-progress" class="bg-indigo-600 h-1.5 w-0 transition-all duration-300"></div>
+    </div>
+
+    <main class="flex-1 max-w-3xl w-full mx-auto p-6 my-6">
+        <div id="start-container" class="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 text-center">
+            <div class="bg-indigo-50 text-indigo-600 w-16 h-16 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fa-solid fa-file-waveform"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-3">مرحباً بك في اختبار القبول الإلكتروني</h2>
+            <p class="text-gray-500 mb-6 text-sm leading-relaxed">
+                يتكون الاختبار من قسمين: **قسم الذكاء والمنطق (IQ)** و**القسم المعرفي الفني** للتخصص المطلوب. 
+                <br> مدة الاختبار الإجمالية <span class="font-bold text-red-500">20 دقيقة</span>. بمجرد البدء لا يمكنك إيقاف المؤقت.
+            </p>
+            <button id="start-exam-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-md">
+                ابدأ الاختبار الآن <i class="fa-solid fa-arrow-left mr-2"></i>
+            </button>
+        </div>
+
+        <div id="quiz-container" class="hidden bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                <span id="question-section-title" class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full">قسم الـ IQ</span>
+                <span id="question-number" class="text-sm font-semibold text-gray-400">السؤال 1 من 10</span>
+            </div>
+
+            <h3 id="question-text" class="text-lg font-bold text-gray-800 mb-6 leading-relaxed">جاري تحميل السؤال...</h3>
+
+            <div id="options-container" class="space-y-3">
+                </div>
+
+            <div class="flex justify-between items-center mt-8 pt-4 border-t border-gray-100">
+                <button id="prev-btn" class="text-gray-500 hover:bg-gray-100 px-4 py-2 rounded-xl transition-all text-sm font-semibold invisible">
+                    <i class="fa-solid fa-arrow-right ml-1"></i> السؤال السابق
+                </button>
+                <button id="next-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl transition-all text-sm font-semibold shadow-sm">
+                    التالي <i class="fa-solid fa-arrow-left mr-1"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center text-xs text-gray-400 py-4 bg-white border-t border-gray-100">
+        منصة القبول الذكي لمدارس التكنولوجيا التطبيقية © 2026
+    </footer>
+
+    <script type="module" src="js/assessment.js"></script>
+</body>
+</html>
