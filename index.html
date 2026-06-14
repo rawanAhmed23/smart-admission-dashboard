@@ -4,114 +4,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة القبول الذكي - لوحة التحكم</title>
+    <title>منصة القبول الذكي | مدارس التكنولوجيا التطبيقية</title>
 
-    <!-- Tailwind CSS للـ UI والـ Responsiveness -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- خط Cairo لـ مظهر احترافي عربي -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <!-- استدعاء ملف الستايل المخصص -->
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- مكتبة ApexCharts الرسمية للرسوم البيانية -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script type="module" src="js/auth-guard.js"></script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-    <div class="flex flex-col md:flex-row min-h-screen">
-
-        <!-- الـ Sidebar (القائمة الجانبية متجاوبة) -->
-        <aside class="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col justify-between shadow-xl">
-            <div>
-                <div class="flex items-center gap-3 mb-8 px-2 py-4 border-b border-gray-700">
-                    <div class="bg-blue-600 p-2 rounded-lg text-white font-bold text-xl shadow-md">S</div>
-                    <span class="text-xl font-bold tracking-wide">القبول الذكي</span>
-                </div>
-                <nav class="space-y-2">
-                    <a href="#"
-                        class="flex items-center space-x-reverse space-x-3 p-3 rounded-lg bg-indigo-600 text-white font-medium transition">
-                        <span>📊</span> <span>لوحة التحكم</span>
-                    </a>
-                    <a href="applicants.html"
-                        class="flex items-center space-x-reverse space-x-3 p-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white transition">
-                        <span>👥</span> <span>طلبات المتقدمين</span>
-                    </a>
-                    <a href="exams.html"
-                        class="flex items-center space-x-reverse space-x-3 p-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white transition">
-                        <span>📝</span> <span>إدارة الاختبارات</span>
-                    </a>
-                </nav>
-                <div class="p-4 border-t border-gray-700">
-                    <button id="signout-btn"
-                        class="flex items-center gap-3 w-full px-4 py-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-all">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>تسجيل الخروج</span>
-                    </button>
-                </div>
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-lg text-white font-bold text-lg shadow-md w-10 h-10 flex items-center justify-center">S</div>
+                <span class="text-xl font-bold text-slate-900 tracking-wide">القبول الذكي</span>
             </div>
-            <div class="pt-6 border-t border-slate-800 text-xs text-gray-500 text-center">
-                مدارس التكنولوجيا التطبيقية &copy; 2026
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                <a href="#features" class="hover:text-indigo-600 transition">المميزات</a>
+                <a href="#how-it-works" class="hover:text-indigo-600 transition">خطوات التقديم</a>
+                <a href="#portals" class="hover:text-indigo-600 transition">بوابات الدخول</a>
+            </nav>
+            <a href="#portals" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all">
+                ابدأ الآن
+            </a>
+        </div>
+    </header>
+
+    <section class="relative bg-gradient-to-b from-indigo-50/70 via-white to-transparent pt-20 pb-16 px-6 text-center overflow-hidden">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold mb-6 border border-indigo-100">
+                <i class="fa-solid fa-sparkles"></i> منظومة رقمية حية ومدعومة بالذكاء الاصطناعي
+            </span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-tight md:leading-snug mb-6">
+                مستقبل التقديم لمدارس <br>
+                <span class="text-indigo-600 bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">التكنولوجيا التطبيقية</span> يبدأ هنا
+            </h1>
+            <p class="text-base md:text-lg text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+                منصة ذكية متكاملة لأتمتة مراحل القبول؛ بدءاً من تسجيل ملفات الطلاب، مروراً بالاختبارات الفنية الموزونة، وحتى صدور تحليلات الكنترول والنتائج بلحظية تامة وبدون أوراق.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="#portals" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all">
+                    التقديم والاختبار للطلاب <i class="fa-solid fa-arrow-left mr-2 text-sm"></i>
+                </a>
+                <a href="#features" class="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold px-8 py-4 rounded-xl transition-all">
+                    اكتشف المزايا
+                </a>
             </div>
-        </aside>
+        </div>
+    </section>
 
-        <!-- المحتوى الرئيسي (Main Content Area) -->
-        <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+    <section id="portals" class="max-w-6xl mx-auto px-6 py-12 w-full">
+        <div class="text-center mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900">بوابات النظام السحابية</h2>
+            <p class="text-sm text-slate-400 mt-2">اختر وجهتك المناسبة للولوج إلى داخل المنصة</p>
+        </div>
 
-            <!-- الهيدر العلوي -->
-            <header class="flex justify-between items-center mb-8 border-b border-gray-200 pb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-indigo-200 hover:shadow-md transition-all group flex flex-col justify-between">
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900">لوحة المتابعة والتحليلات</h1>
-                    <p class="text-sm text-gray-500 mt-1">مراقبة مباشرة لمراحل تقديم الطلاب ونتائج الاختبارات</p>
-                </div>
-                <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 font-medium text-sm">
-                    👤 أدمن نظام القبول
-                </div>
-            </header>
-
-            <!-- شبكة الرسوم البيانية (Grid Setup) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-
-                <!-- كارد الـ Pie Chart -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div>
-                        <h2 class="text-lg font-bold text-gray-800 mb-1">توزيع المتقدمين حسب التخصص</h2>
-                        <p class="text-xs text-gray-400 mb-6">النسب المئوية لرغبات الطلاب الحالية</p>
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-graduation-cap"></i>
                     </div>
-                    <div id="pie-chart" class="w-full"></div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">بوابة المتقدمين (الطلاب)</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        إذا كنت طالباً ترغب في الانضمام لمدارسنا، يمكنك إنشاء حساب جديد، تعبئة الرغبات وتتبع حالة طلبك، بالإضافة إلى الدخول المباشر لقاعة الاختبارات التنافسية الذكية.
+                    </p>
                 </div>
-
-                <!-- كارد الـ Bar Chart -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div>
-                        <h2 class="text-lg font-bold text-gray-800 mb-1">مقارنة أداء الطلاب بالأقسام</h2>
-                        <p class="text-xs text-gray-400 mb-6">متوسط درجات اختبار المهارات مقابل اختبار الـ IQ</p>
-                    </div>
-                    <div id="bar-chart" class="w-full"></div>
-                </div>
-
+                <a href="student-auth.html" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-center font-bold py-3.5 rounded-xl transition-all block">
+                    دخول بوابة الطلاب
+                </a>
             </div>
 
-            <!-- كارد الـ Gantt Chart (ممتد على كامل العرض) -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 w-full">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all group flex flex-col justify-between">
                 <div>
-                    <h2 class="text-lg font-bold text-gray-800 mb-1">الجدول الزمني لمراحل القبول (Gantt Chart)</h2>
-                    <p class="text-xs text-gray-400 mb-6">تتبع الفترات الزمنية المحددة لكل مرحلة من مراحل التصفية</p>
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-xl font-bold mb-6 group-hover:bg-slate-900 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">غرفة التحكم والإدارة (الكنترول)</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        بوابة خاصة بأعضاء لجنة القبول والمصححين لمراجعة ملفات المتقدمين، إدارة وحوكمة بنك الأسئلة، ومراقبة لوحات التحليل الإحصائي والرسوم البيانية الحية للنتائج.
+                    </p>
                 </div>
-                <div id="gantt-chart" class="w-full"></div>
+                <a href="login.html" class="w-full bg-slate-950 hover:bg-slate-800 text-white text-center font-bold py-3.5 rounded-xl transition-all block">
+                    دخول بوابة الكنترول
+                </a>
             </div>
 
-        </main>
-    </div>
+        </div>
+    </section>
 
-    <!-- استدعاء السكريبت الرئيسي كموديول للربط مع الفايربيس لاحقاً -->
-    <script type="module" src="js/dashboard.js"></script>
-    <!-- <script type="module" src="js/seed-questions.js"></script> -->
+    <section id="features" class="bg-slate-100/60 py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-900">لماذا منصة القبول الذكي؟</h2>
+                <p class="text-sm text-slate-400 mt-2">أبرز التقنيات والأنظمة المدمجة لتوفير تجربة عادلة وآمنة</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-2xl shadow-slate-100/50">
+                    <div class="text-indigo-600 text-lg mb-4"><i class="fa-solid fa-bolt-lightning text-2xl"></i></div>
+                    <h4 class="font-bold text-slate-900 mb-2">مزامنة حية ولحظية (Real-time)</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        بفضل بنية الأرْكِتِكْشُر المحدثة، يستقبل الطالب تعديلات حالته فوراً دون حاجة لعمل Refresh يدوي للمتصفح.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-2xl shadow-slate-100/50">
+                    <div class="text-indigo-600 text-lg mb-4"><i class="fa-solid fa-shuffle text-2xl"></i></div>
+                    <h4 class="font-bold text-slate-900 mb-2">اختبارات متوازنة عشوائياً</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        محرك ذكي يسحب الأسئلة من الـ Firestore بحيث يضمن تكافؤ الصعوبة والفرص (سهل، متوسط، صعب) لمنع تكرار النماذج والغش.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-2xl shadow-slate-100/50">
+                    <div class="text-indigo-600 text-lg mb-4"><i class="fa-solid fa-chart-pie text-2xl"></i></div>
+                    <h4 class="font-bold text-slate-900 mb-2">تحليلات وإحصاءات متقدمة</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        دعم متكامل لـ ApexCharts لعرض توزيع نسب رغبات المتقدمين وخطط سير الفترات الزمنية للقبول للإدارة.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="mt-auto bg-slate-900 text-slate-400 text-xs py-6 text-center border-t border-slate-800">
+        جميع الحقوق محفوظة لمنصة القبول الذكي &copy; 2026
+    </footer>
+
 </body>
-
 </html>

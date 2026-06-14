@@ -29,7 +29,7 @@ loginForm.addEventListener("submit", async (e) => {
 
         if (userDocSnap.exists() && userDocSnap.data().role === "admin") {
             // نجاح باهر! المستخدم أدمن.. توجه للوحة التحكم الرئيسية
-            window.location.href = "index.html"; 
+            window.location.href = "admin-dashboard.html"; 
         } else {
             // الحساب سليم لكنه مش أدمن (مثلاً طالب بيحاول يخترق الكنترول)
             await signOut(auth); // تسجيل خروج فوري
